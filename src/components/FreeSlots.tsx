@@ -8,6 +8,20 @@ interface FreeSlotsProps {
   timezone: string;
 }
 
+function timeToMinutes(t: string): number {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function formatDuration(startTime: string, endTime: string): string {
+  const mins = timeToMinutes(endTime) - timeToMinutes(startTime);
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (h === 0) return `${m}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr + "T12:00:00");
   return date.toLocaleDateString("en-US", {
@@ -34,58 +48,69 @@ function groupByDate(slots: FreeSlot[]): Map<string, FreeSlot[]> {
   return grouped;
 }
 
+function tzLabel(timezone: string): string {
+  return timezone.replace(/_/g, " ").replace("America/", "").replace("Europe/", "").replace("Asia/", "").replace("Australia/", "").replace("Pacific/", "");
+}
+
 export default function FreeSlots({
   slots,
   eventsFound,
   timezone,
 }: FreeSlotsProps) {
+  const grouped = groupByDate(slots);
+
   if (slots.length === 0) {
     return (
-      <div className="rounded-2xl bg-white/60 backdrop-blur-sm border border-apple-gray-border/40 p-6 text-center">
-        <p className="text-[15px] text-apple-gray-mid">
-          No free slots found for this date range.
+      <div
+        className="bg-white rounded-2xl p-8 text-center"
+        style={{ boxShadow: "0 2px 24px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04)" }}
+      >
+        <p className="text-[17px] font-medium text-apple-gray-dark mb-1">
+          No slots available
         </p>
-        <p className="text-[13px] text-apple-gray-light mt-1">
-          {eventsFound} events found on your calendar.
+        <p className="text-[14px] text-apple-gray-light">
+          {eventsFound} events found. Try adjusting your date range or working hours.
         </p>
       </div>
     );
   }
 
-  const grouped = groupByDate(slots);
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-[13px] text-apple-gray-light">
-          {slots.length} free slots found ({eventsFound} events on calendar)
-        </p>
-        <p className="text-[12px] text-apple-gray-light">
-          Times in {timezone.replace(/_/g, " ")}
-        </p>
-      </div>
+    <div className="space-y-3">
+      {/* Summary */}
+      <p className="text-[13px] text-apple-gray-light px-1">
+        <span className="font-medium text-apple-gray-mid">{slots.length} slot{slots.length !== 1 ? "s" : ""}</span>
+        {" "}across{" "}
+        <span className="font-medium text-apple-gray-mid">{grouped.size} day{grouped.size !== 1 ? "s" : ""}</span>
+        {" · "}{tzLabel(timezone)}
+        <span className="text-apple-gray-light/60"> · {eventsFound} events scanned</span>
+      </p>
 
+      {/* Day cards */}
       {Array.from(grouped.entries()).map(([date, daySlots]) => (
         <div
           key={date}
-          className="rounded-2xl bg-white/60 backdrop-blur-sm border border-apple-gray-border/40 overflow-hidden"
+          className="bg-white rounded-2xl overflow-hidden"
+          style={{ boxShadow: "0 2px 24px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04)" }}
         >
-          <div className="px-5 py-3 bg-white/40 border-b border-apple-gray-border/30">
-            <h3 className="text-[14px] font-semibold text-apple-gray-dark">
+          {/* Date header */}
+          <div className="px-5 pt-4 pb-3">
+            <h3 className="text-[13px] font-semibold text-apple-gray-light uppercase tracking-wider">
               {formatDate(date)}
             </h3>
           </div>
-          <div className="divide-y divide-apple-gray-border/20">
+
+          {/* Slots */}
+          <div className="divide-y divide-apple-gray-border/30">
             {daySlots.map((slot, i) => (
-              <div
-                key={i}
-                className="px-5 py-3 flex items-center justify-between"
-              >
-                <span className="text-[15px] text-apple-gray-dark">
-                  {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+              <div key={i} className="px-5 py-[14px] flex items-center justify-between">
+                <span className="text-[15px] font-medium text-apple-gray-dark">
+                  {formatTime(slot.startTime)}
+                  <span className="text-apple-gray-light font-normal mx-[6px]">–</span>
+                  {formatTime(slot.endTime)}
                 </span>
-                <span className="text-[13px] text-apple-green font-medium">
-                  Free
+                <span className="text-[13px] font-medium text-apple-green tabular-nums">
+                  {formatDuration(slot.startTime, slot.endTime)}
                 </span>
               </div>
             ))}

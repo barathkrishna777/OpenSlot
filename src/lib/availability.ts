@@ -53,14 +53,13 @@ function mergeBlocks(blocks: BusyBlock[]): BusyBlock[] {
   return merged;
 }
 
-const MIN_SLOT_MINUTES = 15;
-
 export function computeFreeSlots(
   events: CalendarEvent[],
   dateRange: { start: string; end: string },
   includeWeekends: boolean,
   workingHoursStart?: string,
-  workingHoursEnd?: string
+  workingHoursEnd?: string,
+  minSlotMinutes = 60
 ): FreeSlot[] {
   const startMinutes = workingHoursStart
     ? timeToMinutes(workingHoursStart)
@@ -97,7 +96,7 @@ export function computeFreeSlots(
     for (const block of merged) {
       if (block.start > cursor) {
         const gap = block.start - cursor;
-        if (gap >= MIN_SLOT_MINUTES) {
+        if (gap >= minSlotMinutes) {
           freeSlots.push({
             date,
             startTime: minutesToTime(cursor),
@@ -110,7 +109,7 @@ export function computeFreeSlots(
 
     if (cursor < endMinutes) {
       const gap = endMinutes - cursor;
-      if (gap >= MIN_SLOT_MINUTES) {
+      if (gap >= minSlotMinutes) {
         freeSlots.push({
           date,
           startTime: minutesToTime(cursor),

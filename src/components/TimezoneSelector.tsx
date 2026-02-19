@@ -34,15 +34,15 @@ export default function TimezoneSelector({
     <div>
       <label
         htmlFor="timezone"
-        className="block text-[12px] font-medium text-apple-gray-light uppercase tracking-wider mb-2"
+        className="block text-[13px] font-medium text-apple-gray-mid mb-2"
       >
-        Display timezone
+        Timezone
       </label>
       <select
         id="timezone"
         value={timezone}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-apple-gray-border/60 bg-white/70 backdrop-blur-sm px-4 py-3 text-[15px] text-apple-gray-dark focus:outline-none focus:ring-2 focus:ring-apple-blue/20 focus:border-apple-blue transition-all duration-150 appearance-none"
+        className="w-full rounded-xl bg-apple-gray-bg border border-transparent px-4 py-3 text-[15px] text-apple-gray-dark focus:outline-none focus:bg-white focus:border-apple-blue/40 focus:ring-4 focus:ring-apple-blue/10 transition-all duration-150 appearance-none cursor-pointer"
       >
         {MAJOR_TIMEZONES.map((tz) => (
           <option key={tz.value} value={tz.value}>

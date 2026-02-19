@@ -7,6 +7,10 @@ interface DateRangePickerProps {
   onEndChange: (date: string) => void;
 }
 
+const inputClass =
+  "w-full rounded-xl bg-apple-gray-bg border border-transparent px-4 py-3 text-[15px] text-apple-gray-dark focus:outline-none focus:bg-white focus:border-apple-blue/40 focus:ring-4 focus:ring-apple-blue/10 transition-all duration-150";
+const labelClass = "block text-[13px] font-medium text-apple-gray-mid mb-2";
+
 export default function DateRangePicker({
   startDate,
   endDate,
@@ -14,12 +18,9 @@ export default function DateRangePicker({
   onEndChange,
 }: DateRangePickerProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-5">
-      <div className="flex-1">
-        <label
-          htmlFor="start-date"
-          className="block text-[12px] font-medium text-apple-gray-light uppercase tracking-wider mb-2"
-        >
+    <div className="grid grid-cols-2 gap-3">
+      <div>
+        <label htmlFor="start-date" className={labelClass}>
           From
         </label>
         <input
@@ -27,14 +28,11 @@ export default function DateRangePicker({
           type="date"
           value={startDate}
           onChange={(e) => onStartChange(e.target.value)}
-          className="w-full rounded-xl border border-apple-gray-border/60 bg-white/70 backdrop-blur-sm px-4 py-3 text-[15px] text-apple-gray-dark focus:outline-none focus:ring-2 focus:ring-apple-blue/20 focus:border-apple-blue transition-all"
+          className={inputClass}
         />
       </div>
-      <div className="flex-1">
-        <label
-          htmlFor="end-date"
-          className="block text-[12px] font-medium text-apple-gray-light uppercase tracking-wider mb-2"
-        >
+      <div>
+        <label htmlFor="end-date" className={labelClass}>
           To
         </label>
         <input
@@ -42,7 +40,7 @@ export default function DateRangePicker({
           type="date"
           value={endDate}
           onChange={(e) => onEndChange(e.target.value)}
-          className="w-full rounded-xl border border-apple-gray-border/60 bg-white/70 backdrop-blur-sm px-4 py-3 text-[15px] text-apple-gray-dark focus:outline-none focus:ring-2 focus:ring-apple-blue/20 focus:border-apple-blue transition-all"
+          className={inputClass}
         />
       </div>
     </div>

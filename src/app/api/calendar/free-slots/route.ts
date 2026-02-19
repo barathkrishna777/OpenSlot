@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
   const workingHoursStart = params.get("workingHoursStart") || "09:00";
   const workingHoursEnd = params.get("workingHoursEnd") || "17:00";
   const includeWeekends = params.get("includeWeekends") === "true";
+  const minDuration = parseInt(params.get("minDuration") || "60", 10);
 
   if (!startDate || !endDate) {
     return NextResponse.json(
@@ -57,7 +58,8 @@ export async function GET(req: NextRequest) {
       { start: startDate, end: endDate },
       includeWeekends,
       workingHoursStart,
-      workingHoursEnd
+      workingHoursEnd,
+      minDuration
     );
 
     return NextResponse.json({
